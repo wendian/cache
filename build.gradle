@@ -1,0 +1,38 @@
+apply plugin: 'java-library'
+apply plugin: 'maven'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://mvnrepository.com/artifact/"
+    }
+}
+
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integrationTest/java')
+        }
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+task integrationTest(type: Test) {
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen {false}
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.18.3'
+
+    integrationTestCompile 'junit:junit:4.12'
+    integrationTestCompile 'org.mockito:mockito-core:2.18.3'
+}
